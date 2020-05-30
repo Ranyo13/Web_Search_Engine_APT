@@ -66,21 +66,15 @@ public class QueryProcessor {
             System.out.println(e.getMessage());
         }
         return sb.toString();
-}
+	}
+	
+	public static String processQuery(String str)
+	{
+		return tokenizeStopStem(str);
+	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		Scanner s = new Scanner(System.in);
-		String str = "";
-		
-		if(s.hasNextLine())
-		{
-			str = s.nextLine();
-			
-		}
-		String newString = tokenizeStopStem(str);
-		System.out.println(newString);
+		System.out.println(QueryProcessor.processQuery("when was the last match played?"));
 	}
 
 }
