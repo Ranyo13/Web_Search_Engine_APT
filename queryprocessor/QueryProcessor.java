@@ -17,7 +17,7 @@ import org.apache.lucene.util.Version;
 public class QueryProcessor {
 
 	public static HashSet<String> hs = new HashSet<String>();
-
+	//public static Ranker r;
 
 	public static String[] stopwords = {"a", "able", "about",
 	        "across", "after", "all", "almost", "also", "am", "among", "an",
@@ -68,8 +68,13 @@ public class QueryProcessor {
         return sb.toString();
 	}
 	
+	//public static RankerResultSet processQuery(String str)
 	public static String processQuery(String str)
 	{
+		boolean isPhrase = false;
+		if(str.startsWith("\"") && str.endsWith("\""))
+			isPhrase = true;
+		//rankerResultSet = Ranker.rank(tokenizeStopStem(str), isPhrase);
 		return tokenizeStopStem(str);
 	}
 	

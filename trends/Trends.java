@@ -149,14 +149,15 @@ public class Trends {
 //			splitQuery = query.split("\\s");
 //		}
 		Scanner s = new Scanner(System.in);
-		while(true)
+		long start = System.currentTimeMillis();
+		if(s.hasNextLine())
 		{
-			if(s.hasNextLine())
-			{
-				Trends t = new Trends("Egypt");
-				t.addTrend(s.nextLine());
-			}
+			Trends t = new Trends("Egypt");
+			t.addTrend(s.nextLine());
 		}
+		long finalTime = System.currentTimeMillis();
+		long duration = (finalTime - start) / 1000;
+		System.out.println(duration);
 	}
 
 }

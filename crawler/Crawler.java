@@ -17,8 +17,9 @@ public class Crawler implements Runnable {
 
 	private static Set <URL> links = new HashSet<>();
 	private Set <URL> urlsToBeCrawled;
-	private final static int stoppingCriteria = 5000;
+	private final static int stoppingCriteria = 1000; //For performance analysis
 	static Connection conn;
+	private static long startTime;
 //	static Integer numberOfThreads = 0;
 //	static Integer maxNumberOfThreads;
 	
@@ -125,7 +126,7 @@ public class Crawler implements Runnable {
 	    }
 		return true;
 	}
-	
+	//SETS ARE USED NOT JUST DATABASE TO BE ABLE TO SYNC BETWEEN THREADS AND FOR EACH THREAD TO KNOW WHAT URLS IT WILL CRAWL
 	void crawl(Set <URL> urls) //START CRAWLING RECURSIVELY WHEN CALLED
 	{	
 		PreparedStatement ps;
@@ -134,23 +135,9 @@ public class Crawler implements Runnable {
 		Elements recLinks;
 		String urlTextFromRecLinks;
 		URL actualUrl;
-		try {
-			Statement s = conn.createStatement();
-			ResultSet r = s.executeQuery("select count(*) from links");
-			while(r.next())
-			{
-				int numberOfLinksRows = r.getInt(1);
-				if(numberOfLinksRows > 5000)
-				{
-					System.out.println("Stopping criteria is met.");
-					return;
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			
-		}
+		long finalTime;
+		long duration;
+		long durationInSeconds;
 		if(!urls.isEmpty())
 		{
 			synchronized(links)
@@ -181,9 +168,12 @@ public class Crawler implements Runnable {
 				while(r.next())
 				{
 					int numberOfLinksRows = r.getInt(1);
-					if(numberOfLinksRows > 5000)
+					if(numberOfLinksRows > stoppingCriteria)
 					{
-						System.out.println("Stopping criteria is met.");
+						finalTime = System.currentTimeMillis();
+						duration = finalTime - startTime;
+						durationInSeconds = duration/1000;
+						System.out.println("Stopping critieria is met in the current thread after inserting last set of links into the database at time = " + durationInSeconds + ". Returning to the caller function.");
 						return;
 					}
 				}
@@ -239,16 +229,48 @@ public class Crawler implements Runnable {
 				{
 					
 				}
+				try {
+					Statement s = conn.createStatement();
+					ResultSet r = s.executeQuery("select count(*) from links");
+					while(r.next())
+					{
+						int numberOfLinksRows = r.getInt(1);
+						if(numberOfLinksRows > stoppingCriteria)
+						{
+							finalTime = System.currentTimeMillis();
+							duration = finalTime - startTime;
+							durationInSeconds = duration/1000;
+							System.out.println("Stopping criteria is met at time = " + durationInSeconds + " seconds in thread "+Thread.currentThread().getId()+". Returning to caller function.");
+							return;
+						}
+						else
+						{
+							crawl(recUrls);
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					
+				}
 				
-				crawl(recUrls);
 			}
 		}
 	}
 
 	@Override
 	public void run() {
-		crawl(urlsToBeCrawled);
-		System.out.println(links.size() + " links have been crawled successfully.");
+		try {
+			crawl(urlsToBeCrawled);
+		}
+		catch(Exception e)
+		{
+			
+		}
+		long finalTime = System.currentTimeMillis();
+		long duration = finalTime - startTime;
+		long durationInSeconds = duration/1000;
+		System.out.println("Thread " + Thread.currentThread().getId() + " took " + durationInSeconds + " seconds to complete.");
 	}
 
 	public static void main(String[] args) throws MalformedURLException{
@@ -272,7 +294,7 @@ public class Crawler implements Runnable {
 		System.out.println("Connected to the database");
 		
 		
-		
+		startTime = System.currentTimeMillis();
 
 //		maxNumberOfThreads = numberOfThreads;
 		//ArrayList <URL> seedSet = new ArrayList<URL>();
@@ -296,7 +318,7 @@ public class Crawler implements Runnable {
 		    }
 		    if (linksCount>=stoppingCriteria)
 		    {
-		    	System.out.println("Database contains more than 5000 links. Aborting.");
+		    	System.out.println("Database contains more than " + stoppingCriteria + " links. Aborting.");
 		    	return;
 		    }
 		    if (linksCount>0)
@@ -400,7 +422,8 @@ public class Crawler implements Runnable {
 		int threadCounter = 0;
 		int linksThreadStartedWith = 0;
 		boolean remainderDone=false;
-		for(int i = 0; i < seedSetLimit; i+=quotient)
+		Thread[] threads = new Thread[numberOfThreads];
+		for(int i = 0, x = 0; i < seedSetLimit; i+=quotient, x+=1)
 		{
 			if (remainderDone)
 				break;
@@ -423,11 +446,13 @@ public class Crawler implements Runnable {
 					linksThreadStartedWith++;
 				}
 			}
-			Thread t = new Thread(new Crawler(threadURLs));
+			threads[x] = new Thread(new Crawler(threadURLs));
 			threadCounter++;
 			System.out.println("Thread " + threadCounter + " started with " + linksThreadStartedWith + " links as an initial seed set");
 			System.out.println(threadURLs);
-			t.start();
+			threads[x].start();
 		}
+		
+		
 	}
 }
