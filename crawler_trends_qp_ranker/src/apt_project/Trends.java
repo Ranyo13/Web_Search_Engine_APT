@@ -78,8 +78,32 @@ public class Trends {
 		
        
 	}
-	
-	public static void main(String[] args) throws Exception {
+	//FOR TESTING DURATION
+//	public static void main(String[] args) throws Exception {
+//		Connection conn;
+//		conn = null;
+//		String url = "jdbc:mysql://localhost:3306/";
+//		String dbName = "apt_proj";
+//		String driver = "com.mysql.jdbc.Driver";
+//		String userName = "root";
+//		String password = "";
+//		try {
+//		Class.forName(driver).newInstance();
+//		conn = DriverManager.getConnection(url+dbName,userName,password);
+//		}
+//		catch(Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//		
+//		System.out.println("Connected to the database");
+//		long start = System.currentTimeMillis();
+//		Trends t = new Trends("Ryan Reynolds", "Egypt", conn);
+//		long finalTime = System.currentTimeMillis();
+//		long duration = (finalTime-start);
+//		System.out.println("Added trend from given query in " + duration + " milliseconds.");
+		
+		
 //		// TODO Auto-generated method stub
 //		String prevCountryChosen = new String("United States");
 //		String currCountryChosen = new String("United States");
@@ -144,6 +168,6 @@ public class Trends {
 //		long finalTime = System.currentTimeMillis();
 //		long duration = (finalTime - start) / 1000;
 //		System.out.println(duration);
-	}
+//	}
 
 }

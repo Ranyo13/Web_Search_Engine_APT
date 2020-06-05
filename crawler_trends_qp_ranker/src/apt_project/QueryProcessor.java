@@ -99,12 +99,12 @@ public class QueryProcessor extends HttpServlet {
 					System.out.println("Connected to the database");
 					//ALL OF THE FOLLOWING ARGUMENTS SHOULD COME FROM THE WEB-INTERFACE (HTTP REQUEST)//
 					////////////////////////////////////////////////////////////////////////////////////
-			        String actualQuery = request.getParameter("Country");
+			        String actualQuery = request.getParameter("Query");
 			        boolean ifPhrase = false;
 					actualQuery = actualQuery.toLowerCase();
 					if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
 						ifPhrase = true;
-			        String userCountry = request.getParameter("Query");
+			        String userCountry = request.getParameter("Country");
 			        boolean ifWebs = Boolean.parseBoolean(request.getParameter("Webs")); 
 			        /////////////////////////////////////////////////////////////////////
 					Trends t = new Trends (actualQuery, userCountry, conn);
@@ -140,5 +140,20 @@ public class QueryProcessor extends HttpServlet {
 			        
 			        //RETURN REQUIRED BY INTERFACE IN A HTTP RESPONSE HERE
 	 }
+	 //FOR TESTING DURATION
+//	 public static void main(String[] args) throws Exception {
+//		 long start = System.currentTimeMillis();
+//		 String actualQuery = "what is this mayhem";
+//	        boolean ifPhrase = false;
+//			actualQuery = actualQuery.toLowerCase();
+//			if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
+//				ifPhrase = true;
+//	        String userCountry = "Egypt";
+//			String processedQuery = tokenizeStopStem(actualQuery);
+//			String[] keyWords = processedQuery.split(" ");
+//			long finalTime = System.currentTimeMillis();
+//			long duration = (finalTime - start);
+//			System.out.println ("Processed given query in " + duration + " milliseconds.");
+//	 }
 
 }
