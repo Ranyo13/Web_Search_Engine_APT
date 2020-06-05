@@ -1,6 +1,10 @@
 package apt_project;
 
 import java.io.IOException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.StringReader;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,10 +19,10 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 
 
-public class QueryProcessor {
+public class QueryProcessor extends HttpServlet {
 	public static HashSet<String> hs = new HashSet<String>();
 	//public static Ranker r;
-
+	static final long serialVersionUID = 5000;
 	public static String[] stopwords = {"a", "able", "about",
 	        "across", "after", "all", "almost", "also", "am", "among", "an",
 	        "and", "any", "are", "as", "at", "b", "be", "because", "been",
@@ -75,63 +79,66 @@ public class QueryProcessor {
     * @param userCountry is the user's country
     * @param ifWebs indicates whether the user is looking for results of websites or images (1 is for websites)
     */
-	
-	public static void main(String[] args) {
-		//ALL OF THE FOLLOWING ARGUMENTS SHOULD COME FROM THE WEB-INTERFACE (HTTP REQUEST)//
-		////////////////////////////////////////////////////////////////////////////////////
-		String actualQuery = "will CaPiTaLs chaNge ?";
-		boolean ifPhrase = false;
-		actualQuery = actualQuery.toLowerCase();
-		if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
-			ifPhrase = true;
-		boolean ifWebs = true;
-		String userCountry = "Egypt";
-		/////////////////////////////////////////////////////////////////////
-		String processedQuery = tokenizeStopStem(actualQuery);
-		String[] keyWords = processedQuery.split(" ");
-//        Database db = new Database();
-//        Connection conn = db.openConnection();
-		Connection conn;
-		conn = null;
-		String url = "jdbc:mysql://localhost:3306/";
-		String dbName = "apt_proj";
-		String driver = "com.mysql.jdbc.Driver";
-		String userName = "root";
-		String password = "";
-		try {
-		Class.forName(driver).newInstance();
-			conn = DriverManager.getConnection(url+dbName,userName,password);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		System.out.println("Connected to the database");
-        
-        List<webResult> results = new ArrayList<>();
-        List<imgResult> imgresults = new ArrayList<>();
+	 public void doGet(HttpServletRequest request, HttpServletResponse response)
+			    throws IOException {
+				 	Connection conn;
+					conn = null;
+					String url = "jdbc:mysql://localhost:3306/";
+					String dbName = "apt_proj";
+					String driver = "com.mysql.jdbc.Driver";
+					String userName = "root";
+					String password = "";
+					try {
+					Class.forName(driver).newInstance();
+						conn = DriverManager.getConnection(url+dbName,userName,password);
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+					System.out.println("Connected to the database");
+					//ALL OF THE FOLLOWING ARGUMENTS SHOULD COME FROM THE WEB-INTERFACE (HTTP REQUEST)//
+					////////////////////////////////////////////////////////////////////////////////////
+			        String actualQuery = request.getParameter("Country");
+			        boolean ifPhrase = false;
+					actualQuery = actualQuery.toLowerCase();
+					if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
+						ifPhrase = true;
+			        String userCountry = request.getParameter("Query");
+			        boolean ifWebs = Boolean.parseBoolean(request.getParameter("Webs")); 
+			        /////////////////////////////////////////////////////////////////////
+					Trends t = new Trends (actualQuery, userCountry, conn);
+					String processedQuery = tokenizeStopStem(actualQuery);
+					String[] keyWords = processedQuery.split(" ");
+//			        Database db = new Database();
+//			        Connection conn = db.openConnection();
+					
+					
+					
+			        
+			        List<webResult> results = new ArrayList<>();
+			        List<imgResult> imgresults = new ArrayList<>();
 
-        try {
-	        if(ifWebs) {
-	            Ranker r = new Ranker();
-	            r.rank(conn,keyWords,results,userCountry);
-	            
-	            if(ifPhrase) {
-	                phraseSearch p = new phraseSearch();
-	                p.RankWebs(actualQuery,results);
-	            }
-	        } else {
-	            imageRanker i = new imageRanker();
-	            i.rank(conn,keyWords,imgresults);
-	        }
-        }
-        catch(Exception e)
-        {
-        	
-        }
-        
-        //RETURN REQUIRED BY INTERFACE IN A HTTP RESPONSE HERE
-	}
+			        try {
+				        if(ifWebs) {
+				            Ranker r = new Ranker();
+				            r.rank(conn,keyWords,results,userCountry);
+				            
+				            if(ifPhrase) {
+				                phraseSearch p = new phraseSearch();
+				                p.RankWebs(actualQuery,results);
+				            }
+				        } else {
+				            imageRanker i = new imageRanker();
+				            i.rank(conn,keyWords,imgresults);
+				        }
+			        }
+			        catch(Exception e)
+			        {
+			        	
+			        }
+			        
+			        //RETURN REQUIRED BY INTERFACE IN A HTTP RESPONSE HERE
+	 }
 
 }

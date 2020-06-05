@@ -14,45 +14,8 @@ import opennlp.tools.util.Span;
 
 public class Trends {
 	
-	private final String country;
-	private Connection conn;
-	
-	Trends(String cntry)
+	Trends(String query, String country, Connection conn)
 	{
-		conn = null;
-		String url = "jdbc:mysql://localhost:3306/";
-		String dbName = "apt_proj";
-		String driver = "com.mysql.jdbc.Driver";
-		String userName = "root";
-		String password = "";
-		try {
-			Class.forName(driver).newInstance();
-			conn = DriverManager.getConnection(url+dbName,userName,password);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		country = cntry;
-	}
-	
-	
-	
-//	private static String[] stringArrayFromStringArrayList(ArrayList<String> arr) 
-//    { 
-//        String str[] = new String[arr.size()]; 
-//        for (int j = 0; j < arr.size(); j++) { 
-//            str[j] = arr.get(j); 
-//        } 
-//        return str; 
-//    } 
-	
-	public void addTrend (String query)
-	{
-		/////COUNTRY AND NAME ARE UNIQUE KEYS USING THIS QUERY
-		/////ALTER TABLE `trends` ADD UNIQUE `unique_index`(`country`, `name`);
-		/////ID is primary and AUTO_INCREMENT as an extra
-		
 		try {
 			//FETCH PERSON ML MODEL
 			InputStream is = new FileInputStream("en-ner-person.bin");
@@ -92,6 +55,27 @@ public class Trends {
 		{
 			e.printStackTrace();
 		}
+			/////COUNTRY AND NAME ARE UNIQUE KEYS USING THIS QUERY
+			/////ALTER TABLE `trends` ADD UNIQUE `unique_index`(`country`, `name`);
+			/////ID is primary and AUTO_INCREMENT as an extra
+			
+	}
+	
+	
+	
+//	private static String[] stringArrayFromStringArrayList(ArrayList<String> arr) 
+//    { 
+//        String str[] = new String[arr.size()]; 
+//        for (int j = 0; j < arr.size(); j++) { 
+//            str[j] = arr.get(j); 
+//        } 
+//        return str; 
+//    } 
+	
+	public void addTrend (String query)
+	{
+		
+		
        
 	}
 	
@@ -148,16 +132,18 @@ public class Trends {
 //			}
 //			splitQuery = query.split("\\s");
 //		}
-		Scanner s = new Scanner(System.in);
-		long start = System.currentTimeMillis();
-		if(s.hasNextLine())
-		{
-			Trends t = new Trends("Egypt");
-			t.addTrend(s.nextLine());
-		}
-		long finalTime = System.currentTimeMillis();
-		long duration = (finalTime - start) / 1000;
-		System.out.println(duration);
+		
+		
+//		Scanner s = new Scanner(System.in);
+//		long start = System.currentTimeMillis();
+//		if(s.hasNextLine())
+//		{
+//			Trends t = new Trends("Egypt", conn);
+//			t.addTrend(s.nextLine());
+//		}
+//		long finalTime = System.currentTimeMillis();
+//		long duration = (finalTime - start) / 1000;
+//		System.out.println(duration);
 	}
 
 }
