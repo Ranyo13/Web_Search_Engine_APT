@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `links`
 --
 
-CREATE TABLE `linkscheckexport` (
+CREATE TABLE `links` (
   `link` varchar(3000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -35,7 +35,7 @@ CREATE TABLE `linkscheckexport` (
 -- Dumping data for table `links`
 --
 
-INSERT INTO `linkscheckexport` (`link`) VALUES
+INSERT INTO `links` (`link`) VALUES
 ('https://www.bbc.com/news'),
 ('https://edition.cnn.com/'),
 ('https://abcnews.go.com/International/'),
@@ -731,7 +731,7 @@ INSERT INTO `linkscheckexport` (`link`) VALUES
 ('https://abcnews.go.com/International/wireStory/australia-police-rejects-comparison-us-boys-arrest-71035036'),
 ('https://abcnews.go.com/Lifestyle'),
 ('https://abcnews.go.com/International/wireStory/bell-telus-give-5g-contracts-europeans-huawei-shut-71030061');
-INSERT INTO `linkscheckexport` (`link`) VALUES
+INSERT INTO `links` (`link`) VALUES
 ('https://abcnews.go.com/International/wireStory/mexicos-president-full-steam-ahead-mayan-train-71036966'),
 ('https://abcnews.go.com/International/wireStory/high-speed-spanish-passenger-train-hits-car-track-71024287'),
 ('https://abcnews.go.com/International/wireStory/afghan-official-kabul-mosque-bombed-dead-wounded-71023890'),
@@ -1132,7 +1132,7 @@ INSERT INTO `urlstobecrawled` (`link`) VALUES
 --
 -- Indexes for table `links`
 --
-ALTER TABLE `linkscheckexport`
+ALTER TABLE `links`
   ADD UNIQUE KEY `link` (`link`) USING HASH;
 
 --
