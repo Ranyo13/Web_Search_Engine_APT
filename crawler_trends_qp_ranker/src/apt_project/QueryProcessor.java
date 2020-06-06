@@ -22,6 +22,7 @@ public class QueryProcessor extends HttpServlet {
 	public static HashSet<String> hs = new HashSet<String>();
 	//public static Ranker r;
 	static final long serialVersionUID = 5000;
+	// List of stop words that should be removed from the string
 	public static String[] stopwords = {"a", "able", "about",
 	        "across", "after", "all", "almost", "also", "am", "among", "an",
 	        "and", "any", "are", "as", "at", "b", "be", "because", "been",
@@ -50,12 +51,15 @@ public class QueryProcessor extends HttpServlet {
 	
 	private static String tokenizeStopStem(String input) {
 		StopWords();
+		//Tokenize the string
         TokenStream tokenStream = new StandardTokenizer(
                 Version.LUCENE_36, new StringReader(input));
+        //Remove stop words using StopFilter
         tokenStream = new StopFilter(Version.LUCENE_36, tokenStream, hs);
+        //Stem the string using PorterStemFilter
         tokenStream = new PorterStemFilter(tokenStream);
- 
         StringBuilder sb = new StringBuilder();
+        //Build string from tokenStream
         CharTermAttribute charTermAttr = tokenStream.getAttribute(CharTermAttribute.class);
         try{
             while (tokenStream.incrementToken()) {
@@ -106,11 +110,15 @@ public class QueryProcessor extends HttpServlet {
 			        String userCountry = request.getParameter("Country");
 			        boolean ifWebs = Boolean.parseBoolean(request.getParameter("Webs")); 
 			        /////////////////////////////////////////////////////////////////////
+			        
+			        //Add trend with the entered query
 					Trends.addTrend(actualQuery, userCountry, conn);
+					//Remove stop words and stem
 					String processedQuery = tokenizeStopStem(actualQuery);
+					//Split the processed query for the ranker to deal with keywords
 					String[] keyWords = processedQuery.split(" ");	
 			        
-					/// RANKER RESULTS ///
+					/// RANKER CONNECTION ///
 			        List<webResult> results = new ArrayList<>();
 			        List<imgResult> imgresults = new ArrayList<>();
 
@@ -138,7 +146,7 @@ public class QueryProcessor extends HttpServlet {
 	 
 	 
 ///// THE FOLLOWING COMMENTED CODE IS FOR VIDEO DELIVERY AND PERFORMANCE ANALYSIS /////
-	 
+///// 			I CAN'T RECEIVE HTTP REQUEST SO I'LL JUST MIMIC ONE 			  /////
 	 
 //	 	public static void main(String[] args) throws Exception {
 //	 		
