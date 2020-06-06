@@ -18,7 +18,6 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 
-
 public class QueryProcessor extends HttpServlet {
 	public static HashSet<String> hs = new HashSet<String>();
 	//public static Ranker r;
@@ -109,13 +108,9 @@ public class QueryProcessor extends HttpServlet {
 			        /////////////////////////////////////////////////////////////////////
 					Trends.addTrend(actualQuery, userCountry, conn);
 					String processedQuery = tokenizeStopStem(actualQuery);
-					String[] keyWords = processedQuery.split(" ");
-//			        Database db = new Database();
-//			        Connection conn = db.openConnection();
-					
-					
-					
+					String[] keyWords = processedQuery.split(" ");	
 			        
+					/// RANKER RESULTS ///
 			        List<webResult> results = new ArrayList<>();
 			        List<imgResult> imgresults = new ArrayList<>();
 
@@ -138,39 +133,67 @@ public class QueryProcessor extends HttpServlet {
 			        	
 			        }
 			        
-			        //RETURN REQUIRED BY INTERFACE IN A HTTP RESPONSE HERE
+			        /// PASS THE RESULTS TO WEB INTERFACE ///
 	 }
-	 //FOR TESTING DURATION
-	 public static void main(String[] args) throws Exception {
-		 long start = System.currentTimeMillis();
-		 String actualQuery = "Ryan Reynolds is a good actor";
-	        boolean ifPhrase = false;
-			actualQuery = actualQuery.toLowerCase();
-			if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
-				ifPhrase = true;
-	        String userCountry = "Egypt";
-			String processedQuery = tokenizeStopStem(actualQuery);
-			String[] keyWords = processedQuery.split(" ");
-			long finalTime = System.currentTimeMillis();
-			long duration = (finalTime - start);
-			Connection conn;
-			conn = null;
-			String url = "jdbc:mysql://localhost:3306/";
-			String dbName = "apt_proj";
-			String driver = "com.mysql.jdbc.Driver";
-			String userName = "root";
-			String password = "";
-			try {
-			Class.forName(driver).newInstance();
-				conn = DriverManager.getConnection(url+dbName,userName,password);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			System.out.println("Connected to the database");
-			Trends.addTrend("Ryan Reynolds is a good actor", userCountry, conn);
-			System.out.println ("Processed given query in " + duration + " milliseconds.");
-	 }
+	 
+	 
+///// THE FOLLOWING COMMENTED CODE IS FOR VIDEO DELIVERY AND PERFORMANCE ANALYSIS /////
+	 
+	 
+//	 	public static void main(String[] args) throws Exception {
+//	 		
+//			 Connection conn;
+//			 conn = null;
+//			 String url = "jdbc:mysql://localhost:3306/";
+//			 String dbName = "apt_proj";
+//			 String driver = "com.mysql.jdbc.Driver";
+//			 String userName = "root";
+//			 String password = "";
+//			 try {
+//				 Class.forName(driver).newInstance();
+//				 conn = DriverManager.getConnection(url+dbName,userName,password);
+//			 }
+//			 catch(Exception e)
+//			 {
+//				 e.printStackTrace();
+//			 }
+//			 System.out.println("Connected to the database");
+//			 long start = System.currentTimeMillis();
+//			 String actualQuery = "Ryan Reynolds is a good actor";
+//			 boolean ifPhrase = false;
+//			 boolean ifWebs = true;
+//			 actualQuery = actualQuery.toLowerCase();
+//			 if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
+//				 ifPhrase = true;
+//			 String userCountry = "Egypt";
+//			 String processedQuery = tokenizeStopStem(actualQuery);
+//			 String[] keyWords = processedQuery.split(" ");
+//			 Trends.addTrend("Ryan Reynolds is a good actor", userCountry, conn);
+//			 
+//			 List<webResult> results = new ArrayList<>();
+//			 List<imgResult> imgresults = new ArrayList<>();
+//			
+//			try {
+//			    if(ifWebs) {
+//			        Ranker r = new Ranker();
+//			        r.rank(conn,keyWords,results,userCountry);
+//			        
+//			        if(ifPhrase) {
+//			            phraseSearch p = new phraseSearch();
+//			            p.RankWebs(actualQuery,results);
+//			        }
+//			    } else {
+//			        imageRanker i = new imageRanker();
+//			        i.rank(conn,keyWords,imgresults);
+//			    }
+//			}
+//			catch(Exception e)
+//			{
+//				
+//			}
+//			 long finalTime = System.currentTimeMillis();
+//			 long duration = (finalTime - start);
+//			 System.out.println ("Processed given query in " + duration + " milliseconds.");
+//	 }
 
 }
