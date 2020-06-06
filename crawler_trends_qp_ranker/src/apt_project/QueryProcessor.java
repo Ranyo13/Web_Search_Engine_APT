@@ -107,7 +107,7 @@ public class QueryProcessor extends HttpServlet {
 			        String userCountry = request.getParameter("Country");
 			        boolean ifWebs = Boolean.parseBoolean(request.getParameter("Webs")); 
 			        /////////////////////////////////////////////////////////////////////
-					Trends t = new Trends (actualQuery, userCountry, conn);
+					Trends.addTrend(actualQuery, userCountry, conn);
 					String processedQuery = tokenizeStopStem(actualQuery);
 					String[] keyWords = processedQuery.split(" ");
 //			        Database db = new Database();
@@ -141,19 +141,36 @@ public class QueryProcessor extends HttpServlet {
 			        //RETURN REQUIRED BY INTERFACE IN A HTTP RESPONSE HERE
 	 }
 	 //FOR TESTING DURATION
-//	 public static void main(String[] args) throws Exception {
-//		 long start = System.currentTimeMillis();
-//		 String actualQuery = "what is this mayhem";
-//	        boolean ifPhrase = false;
-//			actualQuery = actualQuery.toLowerCase();
-//			if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
-//				ifPhrase = true;
-//	        String userCountry = "Egypt";
-//			String processedQuery = tokenizeStopStem(actualQuery);
-//			String[] keyWords = processedQuery.split(" ");
-//			long finalTime = System.currentTimeMillis();
-//			long duration = (finalTime - start);
-//			System.out.println ("Processed given query in " + duration + " milliseconds.");
-//	 }
+	 public static void main(String[] args) throws Exception {
+		 long start = System.currentTimeMillis();
+		 String actualQuery = "Ryan Reynolds is a good actor";
+	        boolean ifPhrase = false;
+			actualQuery = actualQuery.toLowerCase();
+			if(actualQuery.startsWith("\"") && actualQuery.endsWith("\""))
+				ifPhrase = true;
+	        String userCountry = "Egypt";
+			String processedQuery = tokenizeStopStem(actualQuery);
+			String[] keyWords = processedQuery.split(" ");
+			long finalTime = System.currentTimeMillis();
+			long duration = (finalTime - start);
+			Connection conn;
+			conn = null;
+			String url = "jdbc:mysql://localhost:3306/";
+			String dbName = "apt_proj";
+			String driver = "com.mysql.jdbc.Driver";
+			String userName = "root";
+			String password = "";
+			try {
+			Class.forName(driver).newInstance();
+				conn = DriverManager.getConnection(url+dbName,userName,password);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			System.out.println("Connected to the database");
+			Trends.addTrend("Ryan Reynolds is a good actor", userCountry, conn);
+			System.out.println ("Processed given query in " + duration + " milliseconds.");
+	 }
 
 }
